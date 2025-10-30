@@ -1,24 +1,37 @@
 # Fact and Friction: Analyses
 
-This repository contains to date code and materials for the simulation study evaluating statistical power to detect cross-lagged effects in continuous-time structural equation models (ctsem).
-
-The project simulates longitudinal data under known parameters, fits a predefined continuous-time model using Stan, and estimates the power to detect the true effect size across varying sample sizes.
+This repository contains to date code and materials for the Fact and Friction project. 
 
 ---
 
 ## Overview Power Analysis
 
+The simulation study evaluating statistical power to detect prespecified effects in continuous-time structural equation models (ctsem) (see proposal).
+
 **Goal:**
 Estimate power for detecting a known dynamic effect (`gamma_r1 = 0.1`) in a coupled latent-process model using `ctsem`.
 
-**Pipeline summary:**
+### Quick start
 
-1. Simulate synthetic continuous-time data (`simulate_ct_data.R`)
-2. Fit the ctsem model to each dataset (`fit_once.R`)
-3. Repeat across sample sizes and replicates (`main.R`)
-4. Aggregate and save results to timestamped `.rds` files in `results/power/`
+**Clone the repository**
 
----
+```r 
+git clone https://github.com/da-wi/fact_friction.git
+cd fact_friction
+```
+
+**Run the main simulation script**
+
+```r 
+Rscript scripts/00_power_analysis.R
+```
+
+Example output file:
+
+`results/power/power_results_raw.20251030_083015.rds`
+
+**Inspect or summarize results**
+Open `scripts/01_power_assessment.R` in RStudio. 
 
 ## Requirements
 
@@ -45,41 +58,7 @@ install.packages(c(
   "ctsem", "tidyverse", "future", "future.apply",
   "progressr", "RhpcBLASctl", "tictoc", "rstan"
 ))
-
-
-## Reproducing the Simulation
-
-**Clone the repository**
-
-```r 
-git clone https://github.com/da-wi/fact_friction.git
-cd fact_friction
 ```
-
-**Run the main simulation script**
-```r 
-Rscript scripts/00_power_analysis.R
-```
-
-This will:
-* compile or load the pre-saved Stan model (`model/ctmodel_compiled.rds`)
-* simulate data across all conditions (`Ns`, `reps`, `true_effect`)
-* run parallel fits using 4 workers (make sure you have enough memory and cores)
-* save a timestamped results file in `results/power/`
-
-Example output file:
-
-`results/power/power_results_raw.20251030_083015.rds`
-
-**Inspect or summarize results**
-```r
-res <- readRDS("results/power/power_results_raw.20251030_083015.rds")
-res |>
-  tidyr::unnest(out) |>
-  dplyr::group_by(N) |>
-  dplyr::summarise(power = mean(detected, na.rm = TRUE))
-```
-
 ## Notes 
 * All random seeds are explicitly set for reproducibility.
 * Parallelization is handled through the future package (plan(multisession, workers = 4)).
@@ -92,3 +71,4 @@ Approximate runtime depends on system performance:
 | Sample size | Replicates | CPU cores | Estimated time |
 | ----------- | ---------- | --------- | -------------- |
 | 200–400     | 100        | 4         | ~1–2 hours     |
+
