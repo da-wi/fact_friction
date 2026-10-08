@@ -1,0 +1,9 @@
+# Study 2 (H4a) MRT power simulation
+Ns: [300]
+availability: [0.3, 0.5, 0.7]
+true_effect: [-0.20, -0.15, -0.10]   # standardized g1 (conflict x prompt)
+g0: -0.10                             # standardized prompt effect at mean conflict
+n_reps: 100
+priors: true                          # true = MAP (as in proposal text), false = ML
+days: 28
+compliance: 0.80
